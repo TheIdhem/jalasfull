@@ -1,0 +1,36 @@
+server:
+  port: 9092
+
+spring:
+  application:
+    name: jalas
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL57InnoDBDialect
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate.max_fetch_depth: 0
+      hibernate.default_batch_fetch_size: 1000
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/jalas
+    username: root
+    password: "Abcd12345"
+    hikari:
+      maximum-pool-size: 50
+
+  flyway:
+    baseline-on-migrate: true
+
+
+jalas:
+  email:
+    noReply: no-reply@mediaad.org
+    host: mail.mediaad.org
+    tls: true
+    username: no-reply@mediaad.org
+    password: l$GOi6k@pWigl$GOi6k@pWig
+
