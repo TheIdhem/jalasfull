@@ -11,9 +11,6 @@ import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
 
-/**
- * Created by r on 4/23/18.
- */
 class EmailSender(host: String, tls: Boolean, private val username: String, private val password: String) {
 
     private var session: Session

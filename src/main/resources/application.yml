@@ -1,7 +1,12 @@
 server:
   port: 9092
 
+
+
 spring:
+  main:
+    allow-bean-definition-overriding: true
+
   application:
     name: jalas
 
@@ -14,6 +19,9 @@ spring:
       hibernate.default_batch_fetch_size: 1000
     hibernate:
       ddl-auto: update
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Tehran
 
   datasource:
     url: jdbc:mysql://localhost:3306/jalas
@@ -33,4 +41,8 @@ jalas:
     tls: true
     username: no-reply@mediaad.org
     password: l$GOi6k@pWigl$GOi6k@pWig
+
+feign:
+  hystrix:
+    enabled: true
 
