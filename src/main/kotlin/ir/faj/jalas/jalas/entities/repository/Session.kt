@@ -42,6 +42,10 @@ class Session(
         @Type(type = "ir.faj.jalas.jalas.enums.SessionStatusClassTypeEnum")
         var status: SessionStatus = SessionStatus.pending,
 
+        @Basic
+        @Column(name="room_id")
+        var roomId:Int = 0,
+
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(
                 name = "ja_session_user",

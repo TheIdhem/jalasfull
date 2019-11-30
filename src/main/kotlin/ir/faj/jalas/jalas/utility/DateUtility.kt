@@ -16,7 +16,9 @@ import com.ibm.icu.util.Calendar
 
 private val mongoFormat = SimpleDateFormat("dd-MM-yyyy")
 private val timeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
+fun Date.toRoomServiceFormat() = inputFormat.format(this)?: throw RuntimeException("Failed to format room service $this")
 
 fun String.fromMongoDateString() = mongoFormat.parse(this)
 

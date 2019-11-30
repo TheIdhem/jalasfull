@@ -1,7 +1,12 @@
 package ir.faj.jalas.jalas.service.session
 
+import feign.FeignException
 import ir.faj.jalas.jalas.clients.JalasReservation
 import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
+import ir.faj.jalas.jalas.clients.model.RoomReservationRequest
+import ir.faj.jalas.jalas.clients.model.RoomReservationResponse
+import ir.faj.jalas.jalas.controllers.model.ReservationRequest
+import ir.faj.jalas.jalas.utility.toRoomServiceFormat
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.Exception
@@ -17,17 +22,22 @@ class SessionServiceImpl(val jalasReservation: JalasReservation) : SessionServic
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     override fun getAvailableRoom(startAt: Date, endAt: Date): AvailableRoomResponse {
-        try {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            val start = inputFormat.format(startAt)
-            val end = inputFormat.format(endAt)
-
-            return jalasReservation.getAvailableRoom(start, end)
+        return try {
+            jalasReservation.getAvailableRoom(startAt.toRoomServiceFormat(), endAt.toRoomServiceFormat())
         } catch (ex: Exception) {
-            logger.info("error in get rooms from jalas service room : ex:{${ex.cause}}")
-            return AvailableRoomResponse()
+            logger.error("error in get rooms from jalas service room : ex:{${ex.cause}}")
+            AvailableRoomResponse()
         }
 
+    }
+
+    override fun reservRoom(reservationRequest: ReservationRequest, roomId: Int): RoomReservationResponse {
+        return try {
+            jalasReservation.reserveRoom(roomId, reservationRequest.of())
+        } catch (ex: FeignException) {
+            logger.error("got exception in reservation ex:{${ex.status()}}")
+            RoomReservationResponse()
+        }
     }
 
 }
