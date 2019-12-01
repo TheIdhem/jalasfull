@@ -42,7 +42,4 @@ jalas:
     username: no-reply@mediaad.org
     password: l$GOi6k@pWigl$GOi6k@pWig
 
-feign:
-  hystrix:
-    enabled: true
 

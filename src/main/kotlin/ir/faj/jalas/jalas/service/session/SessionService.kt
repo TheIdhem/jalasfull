@@ -9,4 +9,5 @@ import java.util.*
 interface SessionService {
     fun getAvailableRoom(startAt: Date, endAt: Date): AvailableRoomResponse
     fun reservRoom(reservationRequest: ReservationRequest, roomId: Int): Session
+    fun reservSession(session: Session, reservationRequest: ReservationRequest):Session
 }

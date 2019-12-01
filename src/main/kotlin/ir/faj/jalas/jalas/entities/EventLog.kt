@@ -1,9 +1,7 @@
 package ir.faj.jalas.jalas.entities
 
-import ir.faj.jalas.jalas.enums.SessionStatus
+import ir.faj.jalas.jalas.enums.EventLogType
 import org.hibernate.annotations.DynamicUpdate
-import org.hibernate.annotations.Fetch
-import org.hibernate.annotations.FetchMode
 import org.hibernate.annotations.Type
 import java.util.*
 import javax.persistence.*
@@ -25,10 +23,18 @@ class EventLog(
         @Basic
         @Column(name="event_type")
         @Type(type = "ir.faj.jalas.jalas.enums.EventLogTypeClassTypeEnum")
-        var eventType: Date = Date(),
+        var eventType: EventLogType = EventLogType.roomNotAvailable,
 
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "session_id", nullable = false)
-        var session: Session? = null
+        var session: Session = Session(),
+
+        @Basic
+        @Column(name = "checked")
+        var checked: Boolean = false,
+
+        @OneToOne
+        @JoinColumn(name = "owner_id", nullable = false)
+        var owner: User = User()
 
 )
