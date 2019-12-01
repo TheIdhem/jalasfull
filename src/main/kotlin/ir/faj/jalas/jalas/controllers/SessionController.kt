@@ -5,6 +5,7 @@ import ir.faj.jalas.jalas.clients.model.RoomReservationRequest
 import ir.faj.jalas.jalas.clients.model.RoomReservationResponse
 import ir.faj.jalas.jalas.controllers.model.AvailableRoomRequest
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
+import ir.faj.jalas.jalas.entities.Session
 import ir.faj.jalas.jalas.service.session.SessionService
 import ir.faj.jalas.jalas.utility.endOfDay
 import org.springframework.web.bind.annotation.*
@@ -21,7 +22,7 @@ class SessionController(val sessionService: SessionService) {
 
 
     @PostMapping("/rooms/{roomId}/reserve")
-    fun reservRoom(@RequestBody request: ReservationRequest, @PathVariable roomId:Int): RoomReservationResponse {
+    fun reservRoom(@RequestBody request: ReservationRequest, @PathVariable roomId:Int): Session {
         return sessionService.reservRoom(request,roomId)
     }
 }

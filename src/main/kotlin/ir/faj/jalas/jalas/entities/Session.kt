@@ -14,28 +14,28 @@ import javax.persistence.*
 @DynamicUpdate
 class Session(
         @Id
-        @Column(name="id")
+        @Column(name = "id")
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var Id:Int = 0,
+        var Id: Int = 0,
 
         @Basic
         @Temporal(TemporalType.TIMESTAMP)
-        @Column(name="creation_time")
+        @Column(name = "creation_time")
         var creationTime: Date = Date(),
 
         @Basic
         @Temporal(TemporalType.TIMESTAMP)
-        @Column(name="start_at")
+        @Column(name = "start_at")
         var startAt: Date = Date(),
 
         @Basic
         @Temporal(TemporalType.TIMESTAMP)
-        @Column(name="end_at")
+        @Column(name = "end_at")
         var endAt: Date = Date(),
 
         @Basic
-        @Column(name="title")
-        var title:String = "",
+        @Column(name = "title")
+        var title: String = "",
 
         @Basic
         @Column(name = "status")
@@ -43,8 +43,12 @@ class Session(
         var status: SessionStatus = SessionStatus.pending,
 
         @Basic
-        @Column(name="room_id")
-        var roomId:Int = 0,
+        @Column(name = "room_id")
+        var roomId: Int = 0,
+
+        @OneToOne
+        @JoinColumn(name = "owner_id", nullable = false)
+        var owner: User = User(),
 
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(
