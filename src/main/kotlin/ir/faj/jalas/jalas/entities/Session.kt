@@ -1,4 +1,4 @@
-package ir.faj.jalas.jalas.entities.repository
+package ir.faj.jalas.jalas.entities
 
 import ir.faj.jalas.jalas.enums.SessionStatus
 import org.hibernate.annotations.DynamicUpdate

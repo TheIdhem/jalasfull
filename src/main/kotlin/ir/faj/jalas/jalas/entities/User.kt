@@ -1,4 +1,4 @@
-package ir.faj.jalas.jalas.entities.repository
+package ir.faj.jalas.jalas.entities
 
 import org.hibernate.annotations.DynamicUpdate
 import javax.persistence.*
