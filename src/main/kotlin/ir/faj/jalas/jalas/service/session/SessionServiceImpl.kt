@@ -3,8 +3,6 @@ package ir.faj.jalas.jalas.service.session
 import feign.FeignException
 import ir.faj.jalas.jalas.clients.JalasReservation
 import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
-import ir.faj.jalas.jalas.clients.model.RoomReservationRequest
-import ir.faj.jalas.jalas.clients.model.RoomReservationResponse
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
 import ir.faj.jalas.jalas.entities.EventLog
 import ir.faj.jalas.jalas.entities.Session
@@ -17,12 +15,7 @@ import ir.faj.jalas.jalas.exception.*
 import ir.faj.jalas.jalas.utility.toRoomServiceFormat
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.ExceptionHandler
-import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.Locale
 
 
 @Service
