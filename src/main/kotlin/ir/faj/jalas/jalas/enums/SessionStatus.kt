@@ -1,7 +1,7 @@
 package ir.faj.jalas.jalas.enums
 
 enum class SessionStatus(private val _code: Byte) : PersistentEnum {
-    unavailble(0), pending(1), successReserved(2);
+    unavailble(0), pending(1), successReserved(2),cancled(3);
 
     override fun getCode() = _code
 }

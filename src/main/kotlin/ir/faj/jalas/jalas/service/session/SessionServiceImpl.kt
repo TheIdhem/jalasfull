@@ -3,6 +3,7 @@ package ir.faj.jalas.jalas.service.session
 import feign.FeignException
 import ir.faj.jalas.jalas.clients.JalasReservation
 import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
+import ir.faj.jalas.jalas.controllers.model.ReportResponse
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
 import ir.faj.jalas.jalas.entities.EventLog
 import ir.faj.jalas.jalas.entities.Session
@@ -116,6 +117,17 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
                         """.trimMargin(),
                 to = user.email
         )
+    }
+
+    override fun getAvrageTimeSession(): ReportResponse {
+        val sessionsReserved = sessions.findAllByStatus(SessionStatus.successReserved)
+        val sessionCancled = sessions.findAllByStatus(SessionStatus.cancled)
+
+
+        val averageTimeOfCreateSession = sessionsReserved.sumBy { it.timeOfCreation } / sessionsReserved.size.toDouble()
+        return ReportResponse(averageTimeOfCreateSession = averageTimeOfCreateSession/1000,
+                numberOfSessionReserved = sessionsReserved.size,
+                numberOfSessionCancled = sessionCancled.size)
     }
 
 }
