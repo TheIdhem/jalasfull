@@ -6,6 +6,7 @@ import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
 import ir.faj.jalas.jalas.entities.EventLog
 import ir.faj.jalas.jalas.entities.Session
+import ir.faj.jalas.jalas.entities.User
 import ir.faj.jalas.jalas.entities.repository.EventLogRepository
 import ir.faj.jalas.jalas.entities.repository.SessionRepository
 import ir.faj.jalas.jalas.entities.repository.UserRepository
@@ -17,6 +18,8 @@ import ir.faj.jalas.jalas.utility.toRoomServiceFormat
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.Exception
+import java.lang.RuntimeException
 import java.util.*
 
 
@@ -25,7 +28,7 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
                          val sessions: SessionRepository,
                          val events: EventLogRepository,
                          val users: UserRepository,
-                         val gmailSender:GmailSender
+                         val gmailSender: GmailSender
 ) : SessionService {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -63,30 +66,54 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
         events.save(EventLog(eventType = logStatus, session = session))
     }
 
-    override fun reservSession(session: Session, reservationRequest: ReservationRequest): Session {
+    override fun reservSession(session: Session, reservationRequest: ReservationRequest, eventShouldLog: Boolean): Session {
         return try {
             jalasReservation.reserveRoom(session.roomId, reservationRequest.of())
             session.status = SessionStatus.successReserved
             session.users.forEach {
-                gmailSender.sendToUser("salam","test", listOf(it.email))
+                notifySuccessReservation(it, session)
             }
+            notifySuccessReservation(session.owner, session)
             sessions.save(session)
 
         } catch (ex: FeignException) {
             logger.error("got exception in reservation ex:{${ex.status()}}")
             when (ex.status()) {
-                400 -> throw RoomNotAvailable()
+                400 -> {
+                    if (eventShouldLog)
+                        logEvent(session, SessionStatus.unavailble, EventLogType.roomNotAvailable)
+                    throw RoomNotAvailable()
+                }
                 401 -> throw NotFoundRoom()
                 500 -> {
                     logEvent(session, SessionStatus.pending, EventLogType.shouldRequestAgain)
                     throw InternalServerError()
                 }
                 else -> {
-                    logEvent(session, SessionStatus.unavailble, EventLogType.roomNotAvailable)
+                    if (eventShouldLog)
+                        logEvent(session, SessionStatus.unavailble, EventLogType.roomNotAvailable)
                     throw RoomNotAvailable()
                 }
             }
+        } catch (ex: Exception) {
+            logger.warn("error not on request to reservation system ${ex.cause}")
+            throw RuntimeException()
         }
+    }
+
+    override fun notifySuccessReservation(user: User, session: Session) {
+        gmailSender.sendMail(
+                subject = "Meeting Reservation Successfull",
+                message = """
+                            |Dear ${session.owner.name},
+                            |
+                            |Your meeting '${session.title}' at time [${session.startAt}, ${session.endAt}] has been successfully reserved at room ${session.roomId}.
+                            |
+                            |Best Regards,
+                            |HamoonHamishegi Team
+                        """.trimMargin(),
+                to = user.email
+        )
     }
 
 }

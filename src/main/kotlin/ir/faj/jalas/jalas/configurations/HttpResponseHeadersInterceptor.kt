@@ -17,23 +17,3 @@ class HttpResponseHeadersInterceptor : HandlerInterceptorAdapter() {
         super.postHandle(request, response, handler, modelAndView)
     }
 }
-
-
-/*
-def cms_after(response):
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Origin'] = g.publishing_platform.panel_url
-    response.headers['Cache-Control'] = "no-cache, max-age=0"
-    response.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, accept, content-type, origin, Authorization'
-    response.headers['Access-Control-Expose-Headers'] = 'X-Requested-With, accept, content-type, origin, Authorization'
-    return response
-
-
-def admin_after(response):
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Origin'] = PublishingPlatformType.mediaad.modir_url
-    response.headers['Cache-Control'] = "no-cache, max-age=0"
-    response.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, accept, content-type, origin, Authorization'
-    response.headers['Access-Control-Expose-Headers'] = 'X-Requested-With, accept, content-type, origin, Authorization'
-    return response
-*/
