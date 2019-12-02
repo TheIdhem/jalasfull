@@ -57,7 +57,11 @@ class Session(
                 inverseJoinColumns = [JoinColumn(name = "user_id")]
         )
         @Fetch(value = FetchMode.SELECT)
-        var users: List<User> = mutableListOf()
+        var users: List<User> = mutableListOf(),
+
+        @Basic
+        @Column(name = "time_of_creation")
+        var timeOfCreation: Int = 0
 
 )
 

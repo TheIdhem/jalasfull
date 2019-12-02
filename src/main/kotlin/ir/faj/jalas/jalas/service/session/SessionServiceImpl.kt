@@ -68,12 +68,14 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
 
     override fun reservSession(session: Session, reservationRequest: ReservationRequest, eventShouldLog: Boolean): Session {
         return try {
+            val startTime = Date()
             jalasReservation.reserveRoom(session.roomId, reservationRequest.of())
             session.status = SessionStatus.successReserved
             session.users.forEach {
                 notifySuccessReservation(it, session)
             }
             notifySuccessReservation(session.owner, session)
+            session.timeOfCreation = (Date().time - startTime.time).toInt()
             sessions.save(session)
 
         } catch (ex: FeignException) {

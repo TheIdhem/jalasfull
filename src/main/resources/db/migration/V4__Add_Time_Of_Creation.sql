@@ -1,0 +1,1 @@
+Alter table ja_session add column time_of_creation int default 0;
