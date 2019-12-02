@@ -12,9 +12,11 @@ import ir.faj.jalas.jalas.entities.repository.UserRepository
 import ir.faj.jalas.jalas.enums.EventLogType
 import ir.faj.jalas.jalas.enums.SessionStatus
 import ir.faj.jalas.jalas.exception.*
+import ir.faj.jalas.jalas.utility.GmailSender
 import ir.faj.jalas.jalas.utility.toRoomServiceFormat
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 
@@ -22,7 +24,8 @@ import java.util.*
 class SessionServiceImpl(val jalasReservation: JalasReservation,
                          val sessions: SessionRepository,
                          val events: EventLogRepository,
-                         val users: UserRepository
+                         val users: UserRepository,
+                         val gmailSender:GmailSender
 ) : SessionService {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -53,6 +56,7 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
 
     }
 
+    @Transactional
     private fun logEvent(session: Session, sessionStatus: SessionStatus, logStatus: EventLogType) {
         session.status = sessionStatus
         sessions.save(session)
@@ -63,8 +67,10 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
         return try {
             jalasReservation.reserveRoom(session.roomId, reservationRequest.of())
             session.status = SessionStatus.successReserved
+            session.users.forEach {
+                gmailSender.sendToUser("salam","test", listOf(it.email))
+            }
             sessions.save(session)
-
 
         } catch (ex: FeignException) {
             logger.error("got exception in reservation ex:{${ex.status()}}")
@@ -76,7 +82,7 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
                     throw InternalServerError()
                 }
                 else -> {
-                    logEvent(session, SessionStatus.unavailble, EventLogType.shouldRequestAgain)
+                    logEvent(session, SessionStatus.unavailble, EventLogType.roomNotAvailable)
                     throw RoomNotAvailable()
                 }
             }

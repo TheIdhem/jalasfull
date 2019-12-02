@@ -31,10 +31,6 @@ class EventLog(
 
         @Basic
         @Column(name = "checked")
-        var checked: Boolean = false,
-
-        @OneToOne
-        @JoinColumn(name = "owner_id", nullable = false)
-        var owner: User = User()
+        var checked: Boolean = false
 
 )
