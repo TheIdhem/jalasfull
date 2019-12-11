@@ -37,7 +37,7 @@ spring:
     time-zone: Asia/Tehran
 
   datasource:
-    url: jdbc:mysql://localhost:3306/jalas
+    url: jdbc:mysql://localhost:3306/jalas?useSSL=false
     username: root
     password: "Abcd12345"
     hikari:
