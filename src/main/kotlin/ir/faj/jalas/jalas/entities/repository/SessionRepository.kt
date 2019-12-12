@@ -2,6 +2,7 @@ package ir.faj.jalas.jalas.entities.repository
 
 import ir.faj.jalas.jalas.entities.EventLog
 import ir.faj.jalas.jalas.entities.Session
+import ir.faj.jalas.jalas.entities.User
 import ir.faj.jalas.jalas.enums.EventLogType
 import ir.faj.jalas.jalas.enums.SessionStatus
 import ir.faj.jalas.jalas.enums.SessionStatusClassTypeEnum
