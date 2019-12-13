@@ -7,6 +7,7 @@ import ir.faj.jalas.jalas.controllers.model.AvailableRoomRequest
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
 import ir.faj.jalas.jalas.controllers.model.SessionRequest
 import ir.faj.jalas.jalas.controllers.model.VoteRequest
+import ir.faj.jalas.jalas.dto.rdbms.SessionShallowDto
 import ir.faj.jalas.jalas.entities.Session
 import ir.faj.jalas.jalas.service.session.SessionService
 import ir.faj.jalas.jalas.utility.endOfDay
@@ -29,7 +30,7 @@ class SessionController(val sessionService: SessionService) {
     }
 
     @GetMapping
-    fun getAllSessions(@RequestParam username: String): List<Session> {
+    fun getAllSessions(@RequestParam username: String): List<SessionShallowDto> {
         return sessionService.getAllSession(username)
     }
 

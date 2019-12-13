@@ -1,5 +1,6 @@
 package ir.faj.jalas.jalas.entities
 
+import ir.faj.jalas.jalas.dto.rdbms.VoteShallowDto
 import ir.faj.jalas.jalas.enums.VoteType
 import org.hibernate.annotations.Type
 import java.util.*
@@ -36,4 +37,16 @@ class Vote(
         var status: VoteType = VoteType.down
 
 
-)
+) {
+    constructor() : this(id = 0)
+
+    fun toShallow(isNested: Boolean = false): VoteShallowDto {
+        val dto = VoteShallowDto()
+        if (!isNested) {
+            dto.option = option.toShallow(true)
+            dto.user = user.toShallow(true)
+        }
+        dto.status = status
+        return dto
+    }
+}

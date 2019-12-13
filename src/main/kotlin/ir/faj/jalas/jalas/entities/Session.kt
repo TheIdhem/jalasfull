@@ -1,5 +1,6 @@
 package ir.faj.jalas.jalas.entities
 
+import ir.faj.jalas.jalas.dto.rdbms.SessionShallowDto
 import ir.faj.jalas.jalas.enums.SessionStatus
 import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.Fetch
@@ -65,7 +66,26 @@ class Session(
 
         @OneToMany(mappedBy = "session", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @Fetch(value = FetchMode.SELECT)
-        var options: List<SessionOption> = listOf()
+        var options: List<SessionOption>? = listOf()
 
-)
+) {
+    constructor() : this(id = 0)
+
+    fun toShallow(isNested: Boolean = false): SessionShallowDto {
+        val dto = SessionShallowDto()
+        if (!isNested) {
+            dto.options = options?.map { it.toShallow(true) }
+            dto.users = users.map { it.toShallow(true) }
+            dto.owner = owner.toShallow(true)
+        }
+        dto.id = id
+        dto.startAt = startAt
+        dto.endAt = endAt
+        dto.title = title
+        dto.status = status
+        dto.roomId = roomId
+        dto.timeOfCreation = timeOfCreation
+        return dto
+    }
+}
 

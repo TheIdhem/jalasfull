@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImpl(val sessions: SessionRepository,
-                         val events: EventLogRepository,
-                         val users: UserRepository
+                      val events: EventLogRepository,
+                      val users: UserRepository
 
 ) : UserService {
 
     override fun getUserSession(username: String): List<Session> {
-        return users.findByUsername(username).sessions
+        return users.findByUsername(username).sessions ?: listOf()
     }
 }

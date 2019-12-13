@@ -1,5 +1,6 @@
 package ir.faj.jalas.jalas.entities
 
+import ir.faj.jalas.jalas.dto.rdbms.UserShallowDto
 import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
@@ -28,10 +29,26 @@ class User(
         var username: String = "",
 
         @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
-        var sessions: MutableList<Session> = mutableListOf(),
+        var sessions: List<Session>? = mutableListOf(),
 
         @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @Fetch(value = FetchMode.SELECT)
-        var votes: List<Vote> = listOf()
+        var votes: List<Vote>? = listOf()
 
-)
+) {
+    constructor() : this(id = 0)
+
+    fun toShallow(isNested: Boolean = false): UserShallowDto {
+        val dto = UserShallowDto()
+
+        if (!isNested) {
+            dto.sessions = sessions?.map { it.toShallow(true) }
+            dto.votes = votes?.map { it.toShallow(true) }
+        }
+
+        dto.name = name
+        dto.email = email
+        dto.id = id
+        return dto
+    }
+}

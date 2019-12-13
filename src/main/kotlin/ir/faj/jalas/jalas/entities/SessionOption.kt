@@ -33,23 +33,27 @@ class SessionOption(
 
         @OneToMany(mappedBy = "option", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @Fetch(value = FetchMode.SELECT)
-        var votes: List<Vote> = listOf(),
+        var votes: List<Vote>? = listOf(),
 
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "session_id", nullable = false)
-        var session: Session = Session()
+        var session: Session? = Session()
 
 
-){
-        fun toShallow(isNested: Boolean = false): SessionOptionShallowDto {
-                val dto = SessionOptionShallowDto()
-                dto.startAt = startAt
-                dto.endAt = endAt
-                dto.votes = votes
-                dto.session = session
-                dto.id = id
-                return dto
+) {
+    constructor() : this(id = 0)
 
+    fun toShallow(isNested: Boolean = false): SessionOptionShallowDto {
+        val dto = SessionOptionShallowDto()
+        if (!isNested) {
+            dto.session = session?.toShallow(true) ?: dto.session
         }
+        dto.votes = votes?.map { it.toShallow() } ?: dto.votes
+        dto.startAt = startAt
+        dto.endAt = endAt
+        dto.id = id
+        return dto
+
+    }
 }
 

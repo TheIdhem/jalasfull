@@ -10,18 +10,18 @@ open class SessionOptionBaseDto : JalasDto<SessionOption> {
     var id: Int = 0
     var startAt: Date = Date()
     var endAt: Date = Date()
-    var session: Session? = null
-    var votes: List<Vote> = listOf()
+    var session: SessionShallowDto? = null
+    var votes: List<VoteShallowDto>? = listOf()
 
     override fun toEntity(entity: SessionOption?): SessionOption {
         var model = entity ?: SessionOption()
 
         model.startAt = startAt
         model.endAt = endAt
-        model.session = session ?: model.session
-        model.votes = votes
+        model.session = session?.toEntity()
+        model.votes = votes?.map { it.toEntity() }
         return model
     }
 }
 
-data class SessionOptionShallowDto(var rooms: List<Int> = listOf()) : SessionOptionBaseDto()
+class SessionOptionShallowDto(var rooms: List<Int> = listOf()) : SessionOptionBaseDto()

@@ -7,6 +7,8 @@ import ir.faj.jalas.jalas.controllers.model.ReportResponse
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
 import ir.faj.jalas.jalas.controllers.model.SessionRequest
 import ir.faj.jalas.jalas.controllers.model.VoteRequest
+import ir.faj.jalas.jalas.dto.rdbms.SessionShallowDto
+import ir.faj.jalas.jalas.dto.rdbms.VoteShallowDto
 import ir.faj.jalas.jalas.entities.*
 import ir.faj.jalas.jalas.entities.repository.*
 import ir.faj.jalas.jalas.enums.EventLogType
@@ -143,15 +145,15 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
             it.createOrFindUser()
         }
         session.options = request.options.map {
-            Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session, it.votes)
+            Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session, it?.votes)
         }
         session.title = request.title
         return sessions.save(session)
 
     }
 
-    override fun getAllSession(username: String): List<Session> {
-        return users.findByUsername(username).sessions
+    override fun getAllSession(username: String): List<SessionShallowDto> {
+        return users.findByUsername(username).sessions?.map { it.toShallow() } ?: listOf()
     }
 
     override fun voteToOptions(request: VoteRequest) {
@@ -164,8 +166,8 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         return users.findByEmail(this) ?: users.save(User(email = this, username = this, name = this))
     }
 
-    private fun Pair<Date, Date>.createOrFindOptions(optionId: Int, session: Session, optionVotes: List<Vote>): SessionOption {
-        val optionVotesSaved = optionVotes.map { votes.save(it) }
+    private fun Pair<Date, Date>.createOrFindOptions(optionId: Int, session: Session, optionVotes: List<VoteShallowDto>?): SessionOption {
+        val optionVotesSaved = optionVotes?.map { votes.save(it.toEntity()) }
         val option = options.findById(optionId)
         return if (option.isPresent) option.get() else options.save(SessionOption(startAt = this.first, endAt = this.second, session = session, votes = optionVotesSaved))
     }
