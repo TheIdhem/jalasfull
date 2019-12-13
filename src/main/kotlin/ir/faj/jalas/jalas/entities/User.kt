@@ -1,6 +1,8 @@
 package ir.faj.jalas.jalas.entities
 
 import org.hibernate.annotations.DynamicUpdate
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
 import javax.persistence.*
 
 
@@ -26,6 +28,10 @@ class User(
         var username: String = "",
 
         @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
-        var sessions: MutableList<Session> = mutableListOf()
+        var sessions: MutableList<Session> = mutableListOf(),
+
+        @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+        @Fetch(value = FetchMode.SELECT)
+        var votes: List<Vote> = listOf()
 
 )

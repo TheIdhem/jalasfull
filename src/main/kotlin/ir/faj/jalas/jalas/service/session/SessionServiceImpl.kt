@@ -5,6 +5,7 @@ import ir.faj.jalas.jalas.clients.JalasReservation
 import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
 import ir.faj.jalas.jalas.controllers.model.ReportResponse
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
+import ir.faj.jalas.jalas.controllers.model.SessionRequest
 import ir.faj.jalas.jalas.entities.EventLog
 import ir.faj.jalas.jalas.entities.Session
 import ir.faj.jalas.jalas.entities.User
@@ -119,13 +120,33 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
         )
     }
 
+    override fun createSession(request: SessionRequest): Session {
+        val usersToSessions = request.users.map {
+            it.createOrFindUser()
+        }
+        return sessions.save(Session(
+                users = usersToSessions,
+                title = request.title,
+                owner = users.findByUsername(request.username),
+                options = request.options.map { it.toEntity() }
+        ))
+    }
+
+    override fun getAllSession(username: String): List<Session> {
+        return users.findByUsername(username).sessions
+    }
+
+    private fun String.createOrFindUser(): User {
+        return users.findByEmail(this) ?: users.save(User(email = this, username = this, name = this))
+    }
+
     override fun getAvrageTimeSession(): ReportResponse {
         val sessionsReserved = sessions.findAllByStatus(SessionStatus.successReserved)
         val sessionCancled = sessions.findAllByStatus(SessionStatus.cancled)
 
 
         val averageTimeOfCreateSession = sessionsReserved.sumBy { it.timeOfCreation } / sessionsReserved.size.toDouble()
-        return ReportResponse(averageTimeOfCreateSession = averageTimeOfCreateSession/1000,
+        return ReportResponse(averageTimeOfCreateSession = averageTimeOfCreateSession / 1000,
                 numberOfSessionReserved = sessionsReserved.size,
                 numberOfSessionCancled = sessionCancled.size)
     }

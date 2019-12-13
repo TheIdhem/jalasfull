@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 
 interface UserRepository : JpaRepository<User, Int>, JpaSpecificationExecutor<User> {
-    @Query("select u from User u where u.username = ?1")
+
     fun findByUsername(username: String): User
+
+    fun findByEmail(email:String):User?
 }

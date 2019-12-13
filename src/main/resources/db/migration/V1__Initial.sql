@@ -6,11 +6,11 @@ CREATE TABLE ja_user (
 );
 
 create TABLE ja_session(id Int AUTO_INCREMENT PRIMARY KEY,
-                        creation_time Date,
+                        creation_time timestamp DEFAULT CURRENT_TIMESTAMP,
                         title VARCHAR(200),
                         room_id INT,
-                        start_at DATE,
-                        end_at DATE,
+                        start_at datetime,
+                        end_at datetime,
                         status tinyint,
                         up_vote int default 0,
                         down_vote int default 0,

@@ -61,7 +61,11 @@ class Session(
 
         @Basic
         @Column(name = "time_of_creation")
-        var timeOfCreation: Int = 0
+        var timeOfCreation: Int = 0,
+
+        @OneToMany(mappedBy = "session", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+        @Fetch(value = FetchMode.SELECT)
+        var options: List<SessionOption> = listOf()
 
 )
 
