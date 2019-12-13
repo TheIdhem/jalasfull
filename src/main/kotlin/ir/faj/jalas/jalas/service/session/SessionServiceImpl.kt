@@ -6,10 +6,12 @@ import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
 import ir.faj.jalas.jalas.controllers.model.ReportResponse
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
 import ir.faj.jalas.jalas.controllers.model.SessionRequest
+import ir.faj.jalas.jalas.controllers.model.VoteRequest
 import ir.faj.jalas.jalas.entities.*
 import ir.faj.jalas.jalas.entities.repository.*
 import ir.faj.jalas.jalas.enums.EventLogType
 import ir.faj.jalas.jalas.enums.SessionStatus
+import ir.faj.jalas.jalas.enums.VoteType
 import ir.faj.jalas.jalas.exception.*
 import ir.faj.jalas.jalas.utility.GmailSender
 import ir.faj.jalas.jalas.utility.toRoomServiceFormat
@@ -47,7 +49,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
 
     }
 
-    override fun reservRoom(reservationRequest: ReservationRequest, roomId: Int): Session {
+    override fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): Session {
         val user = users.findByUsername(reservationRequest.username)
         var session = Session(
                 startAt = reservationRequest.startAt,
@@ -150,6 +152,12 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
 
     override fun getAllSession(username: String): List<Session> {
         return users.findByUsername(username).sessions
+    }
+
+    override fun voteToOptions(request: VoteRequest) {
+        val user = users.findByUsername(request.username)
+        request.agreeOptionIds.forEach { votes.save(Vote(option = options.findById(it).get(), user = user, status = VoteType.up)) }
+        request.disAgreeOptionIds.forEach { votes.save(Vote(option = options.findById(it).get(), user = user, status = VoteType.down)) }
     }
 
     private fun String.createOrFindUser(): User {

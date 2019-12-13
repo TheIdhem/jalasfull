@@ -6,6 +6,7 @@ import ir.faj.jalas.jalas.clients.model.RoomReservationResponse
 import ir.faj.jalas.jalas.controllers.model.AvailableRoomRequest
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
 import ir.faj.jalas.jalas.controllers.model.SessionRequest
+import ir.faj.jalas.jalas.controllers.model.VoteRequest
 import ir.faj.jalas.jalas.entities.Session
 import ir.faj.jalas.jalas.service.session.SessionService
 import ir.faj.jalas.jalas.utility.endOfDay
@@ -18,17 +19,17 @@ class SessionController(val sessionService: SessionService) {
 
 
     @PostMapping
-    fun createSession(@RequestBody request: SessionRequest):Session {
+    fun createSession(@RequestBody request: SessionRequest): Session {
         return sessionService.createSession(request)
     }
 
     @PutMapping
-    fun editSession(@RequestBody request: SessionRequest):Session {
+    fun editSession(@RequestBody request: SessionRequest): Session {
         return sessionService.editSession(request)
     }
 
     @GetMapping
-    fun getAllSessions(@RequestParam username:String) : List<Session> {
+    fun getAllSessions(@RequestParam username: String): List<Session> {
         return sessionService.getAllSession(username)
     }
 
@@ -39,7 +40,13 @@ class SessionController(val sessionService: SessionService) {
 
 
     @PostMapping("/rooms/{roomId}/reserve")
-    fun reservRoom(@RequestBody request: ReservationRequest, @PathVariable roomId:Int): Session {
-        return sessionService.reservRoom(request,roomId)
+    fun reserveRoom(@RequestBody request: ReservationRequest, @PathVariable roomId: Int): Session {
+        return sessionService.reserveRoom(request, roomId)
+    }
+
+    @PostMapping("/vote")
+    fun voteToOptions(@RequestBody request: VoteRequest): String {
+        sessionService.voteToOptions(request)
+        return "OK"
     }
 }
