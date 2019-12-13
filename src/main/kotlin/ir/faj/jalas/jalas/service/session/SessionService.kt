@@ -15,5 +15,6 @@ interface SessionService {
     fun reservSession(session: Session, reservationRequest: ReservationRequest, eventShouldLog: Boolean = false): Session
     fun notifySuccessReservation(user: User, session: Session)
     fun createSession(request:SessionRequest):Session
+    fun editSession(request:SessionRequest):Session
     fun getAllSession(username: String): List<Session>
 }

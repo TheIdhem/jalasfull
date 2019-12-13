@@ -22,6 +22,11 @@ class SessionController(val sessionService: SessionService) {
         return sessionService.createSession(request)
     }
 
+    @PutMapping
+    fun editSession(@RequestBody request: SessionRequest):Session {
+        return sessionService.editSession(request)
+    }
+
     @GetMapping
     fun getAllSessions(@RequestParam username:String) : List<Session> {
         return sessionService.getAllSession(username)

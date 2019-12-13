@@ -15,7 +15,7 @@ class Vote(
         @Id
         @Column(name = "id")
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var Id: Int = 0,
+        var id: Int = 0,
 
         @Basic
         @Temporal(TemporalType.TIMESTAMP)

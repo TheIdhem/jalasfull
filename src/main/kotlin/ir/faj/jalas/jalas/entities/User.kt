@@ -13,7 +13,7 @@ class User(
         @Id
         @Column(name = "id")
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var Id: Int = 0,
+        var id: Int = 0,
 
         @Basic
         @Column(name = "name", nullable = false)

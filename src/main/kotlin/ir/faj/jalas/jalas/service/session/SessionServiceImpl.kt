@@ -6,12 +6,8 @@ import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
 import ir.faj.jalas.jalas.controllers.model.ReportResponse
 import ir.faj.jalas.jalas.controllers.model.ReservationRequest
 import ir.faj.jalas.jalas.controllers.model.SessionRequest
-import ir.faj.jalas.jalas.entities.EventLog
-import ir.faj.jalas.jalas.entities.Session
-import ir.faj.jalas.jalas.entities.User
-import ir.faj.jalas.jalas.entities.repository.EventLogRepository
-import ir.faj.jalas.jalas.entities.repository.SessionRepository
-import ir.faj.jalas.jalas.entities.repository.UserRepository
+import ir.faj.jalas.jalas.entities.*
+import ir.faj.jalas.jalas.entities.repository.*
 import ir.faj.jalas.jalas.enums.EventLogType
 import ir.faj.jalas.jalas.enums.SessionStatus
 import ir.faj.jalas.jalas.exception.*
@@ -26,11 +22,13 @@ import java.util.*
 
 
 @Service
-class SessionServiceImpl(val jalasReservation: JalasReservation,
-                         val sessions: SessionRepository,
-                         val events: EventLogRepository,
-                         val users: UserRepository,
-                         val gmailSender: GmailSender
+open class SessionServiceImpl(val jalasReservation: JalasReservation,
+                              val sessions: SessionRepository,
+                              val events: EventLogRepository,
+                              val users: UserRepository,
+                              val gmailSender: GmailSender,
+                              val votes: VoteRepository,
+                              val options: SessionOptionRepository
 ) : SessionService {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -62,7 +60,7 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
     }
 
     @Transactional
-    private fun logEvent(session: Session, sessionStatus: SessionStatus, logStatus: EventLogType) {
+    open fun logEvent(session: Session, sessionStatus: SessionStatus, logStatus: EventLogType) {
         session.status = sessionStatus
         sessions.save(session)
         events.save(EventLog(eventType = logStatus, session = session))
@@ -124,12 +122,30 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
         val usersToSessions = request.users.map {
             it.createOrFindUser()
         }
-        return sessions.save(Session(
+        val session = sessions.save(Session(
                 users = usersToSessions,
                 title = request.title,
-                owner = users.findByUsername(request.username),
-                options = request.options.map { it.toEntity() }
+                owner = users.findByUsername(request.username)
         ))
+        request.options.forEach {
+            Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session, listOf())
+        }
+        return session
+    }
+
+    override fun editSession(request: SessionRequest): Session {
+        val session = sessions.findById(request.sessionId).get()
+        votes.deleteVotesByOptionId(request.options.map { it.id })
+        options.deleteOptionsById(request.options.map { it.id })
+        session.users = request.users.map {
+            it.createOrFindUser()
+        }
+        session.options = request.options.map {
+            Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session, it.votes)
+        }
+        session.title = request.title
+        return sessions.save(session)
+
     }
 
     override fun getAllSession(username: String): List<Session> {
@@ -138,6 +154,12 @@ class SessionServiceImpl(val jalasReservation: JalasReservation,
 
     private fun String.createOrFindUser(): User {
         return users.findByEmail(this) ?: users.save(User(email = this, username = this, name = this))
+    }
+
+    private fun Pair<Date, Date>.createOrFindOptions(optionId: Int, session: Session, optionVotes: List<Vote>): SessionOption {
+        val optionVotesSaved = optionVotes.map { votes.save(it) }
+        val option = options.findById(optionId)
+        return if (option.isPresent) option.get() else options.save(SessionOption(startAt = this.first, endAt = this.second, session = session, votes = optionVotesSaved))
     }
 
     override fun getAvrageTimeSession(): ReportResponse {
