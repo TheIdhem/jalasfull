@@ -19,3 +19,7 @@ class BadRequest(message: String) : Exception(message) {
 class NotFoundRoom(message: String) : Exception(message) {
     constructor() : this("اتاق مورد نظر یافت نشد")
 }
+
+class NotFoundUser(message: String) : Exception(message) {
+    constructor() : this("کاربر مورد نظر یافت نشد")
+}

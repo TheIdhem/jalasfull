@@ -52,7 +52,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
     }
 
     override fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): Session {
-        val user = users.findByUsername(reservationRequest.username)
+        val user = users.findByUsername(reservationRequest.username) ?: throw NotFoundUser()
         var session = Session(
                 startAt = reservationRequest.startAt,
                 endAt = reservationRequest.endAt,
@@ -122,42 +122,44 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         )
     }
 
-    override fun createSession(request: SessionRequest): Session {
-        val usersToSessions = request.users.map {
+    override fun createSession(request: SessionRequest): SessionShallowDto {
+        val owner = users.findByUsername(request.username) ?: throw NotFoundUser()
+        var usersToSessions = request.users.map {
             it.createOrFindUser()
         }
         val session = sessions.save(Session(
-                users = usersToSessions,
+                users = usersToSessions + owner.email.createOrFindUser(),
                 title = request.title,
-                owner = users.findByUsername(request.username)
+                owner = owner
         ))
         request.options.forEach {
             Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session, listOf())
         }
-        return session
+        return session.toShallow()
     }
 
-    override fun editSession(request: SessionRequest): Session {
+    @Transactional
+    override fun editSession(request: SessionRequest): SessionShallowDto {
         val session = sessions.findById(request.sessionId).get()
         votes.deleteVotesByOptionId(request.options.map { it.id })
         options.deleteOptionsById(request.options.map { it.id })
         session.users = request.users.map {
             it.createOrFindUser()
-        }
+        } + session.owner
         session.options = request.options.map {
-            Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session, it?.votes)
+            Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session, it.votes)
         }
         session.title = request.title
-        return sessions.save(session)
+        return sessions.save(session).toShallow()
 
     }
 
     override fun getAllSession(username: String): List<SessionShallowDto> {
-        return users.findByUsername(username).sessions?.map { it.toShallow() } ?: listOf()
+        return users.findByUsername(username)?.sessions?.map { it.toShallow() } ?: listOf()
     }
 
     override fun voteToOptions(request: VoteRequest) {
-        val user = users.findByUsername(request.username)
+        val user = users.findByUsername(request.username) ?: throw NotFoundUser()
         request.agreeOptionIds.forEach { votes.save(Vote(option = options.findById(it).get(), user = user, status = VoteType.up)) }
         request.disAgreeOptionIds.forEach { votes.save(Vote(option = options.findById(it).get(), user = user, status = VoteType.down)) }
     }

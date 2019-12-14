@@ -4,6 +4,7 @@ import ir.faj.jalas.jalas.entities.Session
 import ir.faj.jalas.jalas.entities.repository.EventLogRepository
 import ir.faj.jalas.jalas.entities.repository.SessionRepository
 import ir.faj.jalas.jalas.entities.repository.UserRepository
+import ir.faj.jalas.jalas.exception.NotFoundUser
 import org.springframework.stereotype.Service
 
 @Service
@@ -14,6 +15,6 @@ class UserServiceImpl(val sessions: SessionRepository,
 ) : UserService {
 
     override fun getUserSession(username: String): List<Session> {
-        return users.findByUsername(username).sessions ?: listOf()
+        return users.findByUsername(username)?.sessions ?: throw NotFoundUser()
     }
 }

@@ -20,12 +20,12 @@ class SessionController(val sessionService: SessionService) {
 
 
     @PostMapping
-    fun createSession(@RequestBody request: SessionRequest): Session {
+    fun createSession(@RequestBody request: SessionRequest): SessionShallowDto {
         return sessionService.createSession(request)
     }
 
     @PutMapping
-    fun editSession(@RequestBody request: SessionRequest): Session {
+    fun editSession(@RequestBody request: SessionRequest): SessionShallowDto {
         return sessionService.editSession(request)
     }
 
