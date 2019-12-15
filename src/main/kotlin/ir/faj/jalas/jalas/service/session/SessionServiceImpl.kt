@@ -158,10 +158,20 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         return users.findByUsername(username)?.sessions?.map { it.toShallow() } ?: listOf()
     }
 
+    @Transactional
     override fun voteToOptions(request: VoteRequest) {
         val user = users.findByUsername(request.username) ?: throw NotFoundUser()
-        request.agreeOptionIds.forEach { votes.save(Vote(option = options.findById(it).get(), user = user, status = VoteType.up)) }
-        request.disAgreeOptionIds.forEach { votes.save(Vote(option = options.findById(it).get(), user = user, status = VoteType.down)) }
+//        votes.deleteVotesByOptionId(request.agreeOptionIds)
+        request.agreeOptionIds.forEach { optionId ->
+            val option = options.findById(optionId).get()
+            if (votes.findByUserAndOptionAndStatus(user, option, VoteType.up) == null)
+                votes.save(Vote(option = option, user = user, status = VoteType.up))
+        }
+        request.disAgreeOptionIds.forEach { optionId ->
+            val option = options.findById(optionId).get()
+            if (votes.findByUserAndOptionAndStatus(user, option, VoteType.down) == null)
+                votes.save(Vote(option = option, user = user, status = VoteType.down))
+        }
     }
 
     private fun String.createOrFindUser(): User {

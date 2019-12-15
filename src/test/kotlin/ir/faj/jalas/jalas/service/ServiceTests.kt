@@ -54,8 +54,9 @@ class ServiceTests {
         val ow = mapper.writer().withDefaultPrettyPrinter()
         val requestJson = ow.writeValueAsString(AvailableRoomRequest(startAt = Date(), endAt = Date().addHours(4)))
         val mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/v1.0/session/room")
+                .get("/api/v1.0/session")
                 .header("Origin", "*")
+                .param("username","the_idhem")
                 .content(requestJson)
                 .accept(MediaType.APPLICATION_JSON)
         ).andReturn()

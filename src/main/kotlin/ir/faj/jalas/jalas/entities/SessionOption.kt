@@ -31,7 +31,7 @@ class SessionOption(
         @Column(name = "end_at")
         var endAt: Date = Date(),
 
-        @OneToMany(mappedBy = "option", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "option", fetch = FetchType.EAGER)
         @Fetch(value = FetchMode.SELECT)
         var votes: List<Vote>? = listOf(),
 
@@ -48,7 +48,8 @@ class SessionOption(
         if (!isNested) {
             dto.session = session?.toShallow(true) ?: dto.session
         }
-        dto.votes = votes?.map { it.toShallow() } ?: dto.votes
+        dto.votes = votes?.map { it.toShallow(true) } ?: dto.votes
+
         dto.startAt = startAt
         dto.endAt = endAt
         dto.id = id

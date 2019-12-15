@@ -44,9 +44,10 @@ class Vote(
         val dto = VoteShallowDto()
         if (!isNested) {
             dto.option = option.toShallow(true)
-            dto.user = user.toShallow(true)
         }
+        dto.user = user.toShallow(true)
         dto.status = status
+        dto.id = id
         return dto
     }
 }
