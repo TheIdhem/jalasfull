@@ -53,12 +53,10 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
 
     override fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): Session {
         val user = users.findByUsername(reservationRequest.username) ?: throw NotFoundUser()
-        var session = Session(
-                startAt = reservationRequest.startAt,
-                endAt = reservationRequest.endAt,
-                owner = user,
-                roomId = roomId
-        )
+        val session = sessions.findById(reservationRequest.sessionId).get()
+        val option = options.findById(reservationRequest.optionId).get()
+        reservationRequest.startAt = option.startAt
+        reservationRequest.endAt = option.endAt
         return reservSession(session, reservationRequest)
 
     }
@@ -155,13 +153,24 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
     }
 
     override fun getAllSession(username: String): List<SessionShallowDto> {
-        return users.findByUsername(username)?.sessions?.map { it.toShallow() } ?: listOf()
+        return users.findByUsername(username)?.sessions?.map { it.toShallow() }?.map {
+            it.options?.forEach { option ->
+                try {
+                    option.roomsCouldBeReserved = getAvailableRoom(option.startAt, option.endAt).availableRooms
+                } catch (ex: Exception) {
+                    val a = ex
+                    //hisssss
+                }
+            }
+            it
+        } ?: listOf()
     }
 
     @Transactional
     override fun voteToOptions(request: VoteRequest) {
         val user = users.findByUsername(request.username) ?: throw NotFoundUser()
-//        votes.deleteVotesByOptionId(request.agreeOptionIds)
+        if (votes.findByUserAndOption(user.id, request.agreeOptionIds)?.isNotEmpty() == true)
+            votes.deleteVotesByOptionIdAndUserId(request.agreeOptionIds, user.id)
         request.agreeOptionIds.forEach { optionId ->
             val option = options.findById(optionId).get()
             if (votes.findByUserAndOptionAndStatus(user, option, VoteType.up) == null)

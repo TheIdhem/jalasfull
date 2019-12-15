@@ -7,6 +7,8 @@ import java.util.*
 
 class ReservationRequest(
         var username: String,
+        var optionId: Int,
+        var sessionId: Int,
         var startAt: Date,
         var endAt: Date
 ) {

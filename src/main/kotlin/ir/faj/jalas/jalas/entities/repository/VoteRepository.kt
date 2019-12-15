@@ -13,6 +13,9 @@ interface VoteRepository : JpaRepository<Vote, Int>, JpaSpecificationExecutor<Vo
 
     fun findByUserAndOptionAndStatus(user: User, option: SessionOption, status: VoteType): Vote?
 
+    @Query("select v from Vote v where v.option.id in ?2 and v.user.id = ?1")
+    fun findByUserAndOption(userId: Int, option: List<Int>): List<Vote>?
+
     @Modifying
     @Query("delete from Vote v where v.option.id in ?1")
     fun deleteVotesByOptionId(optionIds: List<Int>)

@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.*
 
 
-@FeignClient(name = "jalas-reservation", url = "http://213.233.176.40")
+@FeignClient(name = "jalas-reservation", url = "http://5.253.27.176")
 interface JalasReservation {
 
     @GetMapping("/available_rooms")

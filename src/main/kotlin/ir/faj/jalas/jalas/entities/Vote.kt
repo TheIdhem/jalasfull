@@ -23,11 +23,11 @@ class Vote(
         @Column(name = "creation_time")
         var creationTime: Date = Date(),
 
-        @ManyToOne(fetch = FetchType.EAGER)
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "option_id", nullable = false)
         var option: SessionOption = SessionOption(),
 
-        @ManyToOne(fetch = FetchType.EAGER)
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user_id", nullable = false)
         var user: User = User(),
 
