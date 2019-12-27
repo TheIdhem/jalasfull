@@ -148,7 +148,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
 
         session.users = request.users.map {
             it.createOrFindUser()
-        } + session.owner
+        }
 
         session.options = request.options.map {
             Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session)

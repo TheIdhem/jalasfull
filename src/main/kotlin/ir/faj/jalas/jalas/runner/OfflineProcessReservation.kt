@@ -15,7 +15,7 @@ class OfflineProcessReservation(val events: EventLogRepository,
                                 val sessionService: SessionService,
                                 val gmailSender: GmailSender) {
 
-//    @Scheduled(fixedDelay = 3 * 60 * 1000)
+    @Scheduled(fixedDelay = 3 * 60 * 1000)
     fun offlineProcess() {
         events.findAllByCheckedAndLogStatus(EventLogType.shouldRequestAgain).forEach { event ->
             try {
@@ -23,6 +23,7 @@ class OfflineProcessReservation(val events: EventLogRepository,
                 sessionService.reservSession(event.session, reservationRequest, true)
                 event.eventType = EventLogType.passed
             } catch (ex: Exception) {
+                println(ex.cause)
                 //hiss dokhtarha faryad nemizannand
 
             }
@@ -31,7 +32,7 @@ class OfflineProcessReservation(val events: EventLogRepository,
         }
     }
 
-//    @Scheduled(fixedDelay = 10 * 60 * 1000)
+    @Scheduled(fixedDelay = 10 * 60 * 1000)
     fun emailForUnavailableRequest() {
         events.findAllByCheckedAndLogStatus(EventLogType.roomNotAvailable).forEach { event ->
             try {
