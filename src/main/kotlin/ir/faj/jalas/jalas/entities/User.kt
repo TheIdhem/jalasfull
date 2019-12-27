@@ -33,7 +33,11 @@ class User(
 
         @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @Fetch(value = FetchMode.SELECT)
-        var votes: List<Vote>? = listOf()
+        var votes: List<Vote>? = listOf(),
+
+        @Basic
+        @Column(name = "password", nullable = false)
+        var password: String = ""
 
 ) {
     constructor() : this(id = 0)

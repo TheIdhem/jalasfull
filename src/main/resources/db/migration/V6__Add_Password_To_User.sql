@@ -1,0 +1,1 @@
+Alter table ja_user add column password VARCHAR(500);

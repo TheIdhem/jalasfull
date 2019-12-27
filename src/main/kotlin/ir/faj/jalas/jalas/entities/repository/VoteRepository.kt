@@ -13,8 +13,8 @@ interface VoteRepository : JpaRepository<Vote, Int>, JpaSpecificationExecutor<Vo
 
     fun findByUserAndOptionAndStatus(user: User, option: SessionOption, status: VoteType): Vote?
 
-    @Query("select v from Vote v where v.option.id in ?2 and v.user.id = ?1")
-    fun findByUserAndOption(userId: Int, option: List<Int>): List<Vote>?
+    fun findByUserAndOptionIdIsIn(user: User, option: List<Int>): List<Vote>?
+    fun findByUserAndOptionId(user: User, optionId: Int): Vote?
 
     @Modifying
     @Query("delete from Vote v where v.option.id in ?1")
