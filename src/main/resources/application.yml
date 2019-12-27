@@ -1,6 +1,9 @@
 server:
   port: 9092
 
+jwt:
+  secret: javainuse
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -47,4 +50,9 @@ spring:
     baseline-on-migrate: true
 
 
-
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 2000

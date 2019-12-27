@@ -16,8 +16,9 @@ interface SessionService {
     fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): Session
     fun reservSession(session: Session, reservationRequest: ReservationRequest, eventShouldLog: Boolean = false): Session
     fun notifySuccessReservation(user: User, session: Session)
-    fun createSession(request:SessionRequest):SessionShallowDto
-    fun editSession(request:SessionRequest):SessionShallowDto
-    fun getAllSession(username: String): List<SessionShallowDto>
-    fun voteToOptions(request:VoteRequest)
+    fun createSession(request: SessionRequest, user: User): SessionShallowDto
+    fun editSession(request: SessionRequest, user: User): SessionShallowDto
+    fun getAllSession(user: User): List<SessionShallowDto>
+    fun voteToOptions(request: VoteRequest, user: User)
+    fun voteToOption(optionId:Int, user: User)
 }

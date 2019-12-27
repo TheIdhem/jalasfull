@@ -1,7 +1,7 @@
 package ir.faj.jalas.jalas.enums
 
 enum class VoteType(private val _code: Byte) : PersistentEnum {
-    up(0), down(1);
+    up(1), down(2);
 
     override fun getCode() = _code
 }
