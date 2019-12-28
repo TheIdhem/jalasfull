@@ -75,6 +75,8 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
             val startTime = Date()
             jalasReservation.reserveRoom(session.roomId, reservationRequest.of())
             session.status = SessionStatus.successReserved
+            session.startAt = reservationRequest.startAt!!
+            session.endAt = reservationRequest.endAt!!
             session.users.forEach {
                 notifySuccessReservation(it, session)
             }
@@ -112,9 +114,10 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         gmailSender.sendMail(
                 subject = "Meeting Reservation Successfull",
                 message = """
-                            |Dear ${session.owner.name},
+                            |Dear ${user.name},
                             |
                             |Your meeting '${session.title}' at time [${session.startAt}, ${session.endAt}] has been successfully reserved at room ${session.roomId}.
+                            |this is the link to see your session data http://localhost:3000/session/'${session.id}'
                             |
                             |Best Regards,
                             |HamoonHamishegi Team
