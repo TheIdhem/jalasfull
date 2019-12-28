@@ -32,4 +32,8 @@ class UserServiceImpl(val users: UserRepository,
     override fun findByUserName(principal: Principal): User {
         return users.findByUsername(principal.name) ?: throw NotFoundUser()
     }
+
+    override fun getUserInfo(username: String):UserShallowDto{
+        return users.findByUsername(username)?.toShallow() ?: throw NotFoundUser()
+    }
 }

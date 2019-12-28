@@ -162,6 +162,8 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
             it.options?.forEach { option ->
                 try {
                     option.roomsCouldBeReserved = getAvailableRoom(option.startAt, option.endAt).availableRooms
+                    option.agreeVotes = option.votes?.filter { it.status == VoteType.up }?.size ?: 0
+                    option.disAgreeVotes = option.votes?.filter { it.status == VoteType.down }?.size ?: 0
                 } catch (ex: Exception) {
                     val a = ex
                     //hisssss

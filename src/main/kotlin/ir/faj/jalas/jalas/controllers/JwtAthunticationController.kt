@@ -13,15 +13,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ir.faj.jalas.jalas.configurations.JwtTokenUtil
 import ir.faj.jalas.jalas.controllers.model.JwtRequest
 import ir.faj.jalas.jalas.controllers.model.JwtResponse
+import ir.faj.jalas.jalas.controllers.model.LoginResponse
 import ir.faj.jalas.jalas.exception.NotFoundPassword
 import ir.faj.jalas.jalas.exception.NotFoundUser
 import ir.faj.jalas.jalas.service.jwt.JwtUserDetailsService
+import ir.faj.jalas.jalas.service.user.UserService
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1.0")
-class JwtAuthenticationController(private val authenticationManager: AuthenticationManager) {
+class JwtAuthenticationController(private val authenticationManager: AuthenticationManager,
+                                  private val userService: UserService) {
 
 
     @Autowired
@@ -41,7 +44,8 @@ class JwtAuthenticationController(private val authenticationManager: Authenticat
 
         var token = jwtTokenUtil.generateToken(userDetails)
 
-        return ResponseEntity.ok(JwtResponse(token))
+        return ResponseEntity.ok(JwtResponse(token, userService.getUserInfo(userDetails.username)))
+
     }
 
     private fun authenticate(username: String, password: String) {

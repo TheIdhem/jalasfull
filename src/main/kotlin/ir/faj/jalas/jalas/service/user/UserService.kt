@@ -10,4 +10,5 @@ interface UserService {
     fun getUserSession(username:String): List<Session>
     fun register(request: UserRegisterRequest):UserShallowDto
     fun findByUserName(principal: Principal): User
+    fun getUserInfo(username: String):UserShallowDto
 }
