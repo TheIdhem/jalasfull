@@ -23,4 +23,6 @@ interface VoteRepository : JpaRepository<Vote, Int>, JpaSpecificationExecutor<Vo
     @Modifying
     @Query("delete from Vote v where v.option.id in ?1 and v.user.id=?2")
     fun deleteVotesByOptionIdAndUserId(optionIds: List<Int>, userId: Int)
+
+    fun deleteByOptionIdAndUserId(optionId: Int, userId: Int)
 }

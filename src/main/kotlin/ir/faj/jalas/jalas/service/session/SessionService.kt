@@ -1,10 +1,7 @@
 package ir.faj.jalas.jalas.service.session
 
 import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
-import ir.faj.jalas.jalas.controllers.model.ReportResponse
-import ir.faj.jalas.jalas.controllers.model.ReservationRequest
-import ir.faj.jalas.jalas.controllers.model.SessionRequest
-import ir.faj.jalas.jalas.controllers.model.VoteRequest
+import ir.faj.jalas.jalas.controllers.model.*
 import ir.faj.jalas.jalas.dto.rdbms.SessionShallowDto
 import ir.faj.jalas.jalas.entities.Session
 import ir.faj.jalas.jalas.entities.User
@@ -20,5 +17,5 @@ interface SessionService {
     fun editSession(request: SessionRequest, user: User): SessionShallowDto
     fun getAllSession(user: User): List<SessionShallowDto>
     fun voteToOptions(request: VoteRequest, user: User)
-    fun voteToOption(optionId:Int, user: User)
+    fun voteToOption(request: SingleVoteRequest, user: User)
 }

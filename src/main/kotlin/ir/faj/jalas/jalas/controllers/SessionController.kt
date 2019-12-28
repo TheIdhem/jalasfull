@@ -3,10 +3,7 @@ package ir.faj.jalas.jalas.controllers
 import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
 import ir.faj.jalas.jalas.clients.model.RoomReservationRequest
 import ir.faj.jalas.jalas.clients.model.RoomReservationResponse
-import ir.faj.jalas.jalas.controllers.model.AvailableRoomRequest
-import ir.faj.jalas.jalas.controllers.model.ReservationRequest
-import ir.faj.jalas.jalas.controllers.model.SessionRequest
-import ir.faj.jalas.jalas.controllers.model.VoteRequest
+import ir.faj.jalas.jalas.controllers.model.*
 import ir.faj.jalas.jalas.dto.rdbms.SessionShallowDto
 import ir.faj.jalas.jalas.entities.Session
 import ir.faj.jalas.jalas.service.session.SessionService
@@ -51,17 +48,17 @@ class SessionController(val sessionService: SessionService, val userService: Use
         return sessionService.reserveRoom(request, roomId)
     }
 
-    @PostMapping("/vote")
+    @PostMapping("/votes")
     fun voteToOptions(@RequestBody request: VoteRequest, principal: Principal): String {
         val user = userService.findByUserName(principal)
         sessionService.voteToOptions(request, user)
         return "OK"
     }
 
-    @PostMapping("/{optionId}/vote")
-    fun voteToOption(@PathVariable optionId: Int, principal: Principal): String {
+    @PostMapping("/vote")
+    fun voteToOption(@RequestBody request: SingleVoteRequest, principal: Principal): String {
         val user = userService.findByUserName(principal)
-        sessionService.voteToOption(optionId, user)
+        sessionService.voteToOption(request, user)
         return "OK"
     }
 }

@@ -3,10 +3,7 @@ package ir.faj.jalas.jalas.service.session
 import feign.FeignException
 import ir.faj.jalas.jalas.clients.JalasReservation
 import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
-import ir.faj.jalas.jalas.controllers.model.ReportResponse
-import ir.faj.jalas.jalas.controllers.model.ReservationRequest
-import ir.faj.jalas.jalas.controllers.model.SessionRequest
-import ir.faj.jalas.jalas.controllers.model.VoteRequest
+import ir.faj.jalas.jalas.controllers.model.*
 import ir.faj.jalas.jalas.dto.rdbms.SessionShallowDto
 import ir.faj.jalas.jalas.dto.rdbms.VoteShallowDto
 import ir.faj.jalas.jalas.entities.*
@@ -17,6 +14,7 @@ import ir.faj.jalas.jalas.enums.VoteType
 import ir.faj.jalas.jalas.exception.*
 import ir.faj.jalas.jalas.utility.GmailSender
 import ir.faj.jalas.jalas.utility.toRoomServiceFormat
+import org.omg.CosNaming.NamingContextPackage.NotFound
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -190,15 +188,18 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         }
     }
 
-    override fun voteToOption(optionId: Int, user: User) {
-        val vote = votes.findByUserAndOptionId(user, optionId)
-        votes.save(if (vote == null) {
-            val option = options.findById(optionId).get()
-            Vote(option = option, user = user, status = VoteType.up)
+    @Transactional
+    override fun voteToOption(request: SingleVoteRequest, user: User) {
+        if (request.status == VoteType.delete) {
+            val vote = votes.findByUserAndOptionId(user, request.optionId) ?: throw NotFoundVote()
+            votes.delete(vote)
         } else {
-            vote.status = if (vote.status == VoteType.up) VoteType.down else VoteType.up
-            vote
-        })
+            votes.findByUserAndOptionId(user, request.optionId)?.let { vote ->
+                vote.status = request.status
+                votes.save(vote)
+            }
+                    ?: votes.save(Vote(status = request.status, option = options.findById(request.optionId).get(), user = user))
+        }
     }
 
     private fun String.createOrFindUser(): User {

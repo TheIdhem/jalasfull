@@ -36,3 +36,8 @@ class UserNotAllowToChange(message: String) : RuntimeException(message) {
     constructor() : this("شما اجازه‌ی ایجاد تغیرات را ندارید")
 }
 
+class NotFoundVote(message: String) : RuntimeException(message) {
+    constructor() : this("رای مورد نظر موجود نبود")
+}
+
+
