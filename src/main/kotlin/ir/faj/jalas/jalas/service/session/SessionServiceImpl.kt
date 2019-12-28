@@ -82,6 +82,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
             session.timeOfCreation = (Date().time - startTime.time).toInt()
             sessions.save(session)
 
+
         } catch (ex: FeignException) {
             logger.error("got exception in reservation ex:{${ex.status()}}")
             when (ex.status()) {
@@ -122,18 +123,56 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         )
     }
 
+    private fun notifyForVoteToPoll(session: Session, voter: User, option: SessionOption) {
+        gmailSender.sendMail(
+                subject = "'${voter.name}' vote to poll",
+                message = """
+                            |Dear ${session.owner.name},
+                            |
+                            |'${voter.name}' vote to poll with title of '${session.title}' and the time of vote is[${option.startAt}, ${option.endAt}].
+                            |
+                            |Best Regards,
+                            |HamoonHamishegi Team
+                        """.trimMargin(),
+                to = session.owner.email
+        )
+    }
+
+    private fun notifyAddedToPoll(user: User, session: Session) {
+        gmailSender.sendMail(
+                subject = "Add to poll",
+                message = """
+                            |Dear ${user.name},
+                            |
+                            |You are added to poll with title '${session.title}'.
+                            |
+                            |Best Regards,
+                            |HamoonHamishegi Team
+                        """.trimMargin(),
+                to = user.email
+        )
+    }
+
     override fun createSession(request: SessionRequest, user: User): SessionShallowDto {
         var usersToSessions = request.users.map {
             it.createOrFindUser()
         }
+
+
         val session = sessions.save(Session(
                 users = usersToSessions + user.email.createOrFindUser(),
                 title = request.title,
                 owner = user
         ))
+
+        usersToSessions.forEach {
+            notifyAddedToPoll(it, session)
+        }
+
         request.options.forEach {
             Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session)
         }
+
         return session.toShallow()
     }
 
@@ -143,9 +182,17 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
 
         if (session.owner.id != user.id)
             throw UserNotAllowToChange()
+        val sessionsMapUser = session.users.associateBy { it.id }
+
+        request.users.forEach {
+
+        }
 
         session.users = request.users.map {
-            it.createOrFindUser()
+            val user = it.createOrFindUser()
+            if (sessionsMapUser[user.id] != null)
+                notifyAddedToPoll(user, session)
+            user
         }
 
         session.options = request.options.map {
@@ -196,11 +243,14 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
             val vote = votes.findByUserAndOptionId(user, request.optionId) ?: throw NotFoundVote()
             votes.delete(vote)
         } else {
-            votes.findByUserAndOptionId(user, request.optionId)?.let { vote ->
+
+            val vote = votes.findByUserAndOptionId(user, request.optionId)?.let { vote ->
                 vote.status = request.status
                 votes.save(vote)
             }
                     ?: votes.save(Vote(status = request.status, option = options.findById(request.optionId).get(), user = user))
+            if (user.id != vote.option.session?.owner?.id)
+                notifyForVoteToPoll(vote.option.session!!, user, vote.option)
         }
     }
 

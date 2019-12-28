@@ -14,6 +14,7 @@ open class UserBaseDto : JalasDto<User> {
         var model = User()
         model.name = name
         model.email = email
+        model.username = username
         model.sessions = sessions?.map { it.toEntity() }
         model.votes = votes?.map { it.toEntity() }
         return model

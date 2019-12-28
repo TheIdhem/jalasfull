@@ -14,6 +14,7 @@ interface VoteRepository : JpaRepository<Vote, Int>, JpaSpecificationExecutor<Vo
     fun findByUserAndOptionAndStatus(user: User, option: SessionOption, status: VoteType): Vote?
 
     fun findByUserAndOptionIdIsIn(user: User, option: List<Int>): List<Vote>?
+
     fun findByUserAndOptionId(user: User, optionId: Int): Vote?
 
     @Modifying

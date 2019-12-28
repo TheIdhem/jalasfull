@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ir.faj.jalas.jalas.configurations.JwtTokenUtil
 import ir.faj.jalas.jalas.controllers.model.JwtRequest
 import ir.faj.jalas.jalas.controllers.model.JwtResponse
-import ir.faj.jalas.jalas.controllers.model.LoginResponse
 import ir.faj.jalas.jalas.exception.NotFoundPassword
 import ir.faj.jalas.jalas.exception.NotFoundUser
 import ir.faj.jalas.jalas.service.jwt.JwtUserDetailsService
@@ -52,9 +51,9 @@ class JwtAuthenticationController(private val authenticationManager: Authenticat
         try {
             authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
         } catch (e: DisabledException) {
-            throw Exception("USER_DISABLED", e);
+            throw Exception("USER_DISABLED", e)
         } catch (e: BadCredentialsException) {
-            throw Exception("INVALID_CREDENTIALS", e);
+            throw Exception("INVALID_CREDENTIALS", e)
         }
     }
 }

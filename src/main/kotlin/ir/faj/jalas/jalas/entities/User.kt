@@ -31,7 +31,7 @@ class User(
         @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
         var sessions: List<Session>? = mutableListOf(),
 
-        @OneToMany(mappedBy = "user",  fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
         @Fetch(value = FetchMode.SELECT)
         var votes: List<Vote>? = listOf(),
 
@@ -51,6 +51,7 @@ class User(
         }
 
         dto.name = name
+        dto.username = username
         dto.email = email
         dto.id = id
         return dto
