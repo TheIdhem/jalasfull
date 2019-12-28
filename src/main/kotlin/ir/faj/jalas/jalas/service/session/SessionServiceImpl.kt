@@ -190,7 +190,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
 
         session.users = request.users.map {
             val user = it.createOrFindUser()
-            if (sessionsMapUser[user.id] != null)
+            if (sessionsMapUser[user.id] == null)
                 notifyAddedToPoll(user, session)
             user
         }
@@ -218,6 +218,12 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
             }
             it
         } ?: listOf()
+    }
+
+    override fun getSessionWithId(user: User, sessionId: Int): SessionShallowDto {
+        val session = sessions.findById(sessionId).get()
+        session.users.find { user.id == it.id } ?: throw NotAllowToAccess()
+        return sessions.findById(sessionId).get().toShallow()
     }
 
     @Transactional

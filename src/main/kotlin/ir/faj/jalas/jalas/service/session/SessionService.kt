@@ -16,6 +16,7 @@ interface SessionService {
     fun createSession(request: SessionRequest, user: User): SessionShallowDto
     fun editSession(request: SessionRequest, user: User): SessionShallowDto
     fun getAllSession(user: User): List<SessionShallowDto>
+    fun getSessionWithId(user: User, sessionId: Int): SessionShallowDto
     fun voteToOptions(request: VoteRequest, user: User)
     fun voteToOption(request: SingleVoteRequest, user: User)
 }

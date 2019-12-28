@@ -40,4 +40,8 @@ class NotFoundVote(message: String) : RuntimeException(message) {
     constructor() : this("رای مورد نظر موجود نبود")
 }
 
+class NotAllowToAccess(message: String) : RuntimeException(message) {
+    constructor() : this("شما در این جلسه حظور ندارید و اجازه ندارید اطلاعات آن را ببنید")
+}
+
 

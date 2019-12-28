@@ -36,6 +36,12 @@ class SessionController(val sessionService: SessionService, val userService: Use
         return sessionService.getAllSession(user)
     }
 
+    @GetMapping("/{sessionId}")
+    fun getSessionWithId(@PathVariable sessionId: Int, principal: Principal): SessionShallowDto {
+        val user = userService.findByUserName(principal)
+        return sessionService.getSessionWithId(user, sessionId)
+    }
+
     @PostMapping("/room")
     fun getSession(@RequestBody request: AvailableRoomRequest): AvailableRoomResponse {
         return sessionService.getAvailableRoom(request.startAt, request.endAt)
