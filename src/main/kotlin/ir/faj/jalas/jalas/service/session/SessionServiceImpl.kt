@@ -267,9 +267,12 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
     }
 
     override fun getSessionWithId(user: User, sessionId: Int): SessionShallowDto {
-        val session = sessions.findById(sessionId).get()
-        session.users.find { user.id == it.id } ?: throw NotAllowToAccess()
-        return sessions.findById(sessionId).get().toShallow()
+        val session = sessions.findById(sessionId).get().toShallow()
+        session.users?.find { user.id == it.id } ?: throw NotAllowToAccess()
+        session.options?.forEach { option ->
+            option.roomsCouldBeReserved = getAvailableRoom(option.startAt, option.endAt).availableRooms
+        }
+        return session
     }
 
     @Transactional
