@@ -66,7 +66,11 @@ class Session(
 
         @OneToMany(mappedBy = "session", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @Fetch(value = FetchMode.SELECT)
-        var options: List<SessionOption>? = listOf()
+        var options: List<SessionOption>? = listOf(),
+
+        @OneToMany(mappedBy = "session", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+        @Fetch(value = FetchMode.SELECT)
+        var comments: List<Comment>? = null
 
 ) {
     constructor() : this(id = 0)
@@ -77,6 +81,7 @@ class Session(
             dto.options = options?.map { it.toShallow(true) }
             dto.users = users.map { it.toShallow(true) }
             dto.owner = owner.toShallow(true)
+            dto.comments = comments?.map { it.toShallow(true) }
         }
         dto.id = id
         dto.startAt = startAt

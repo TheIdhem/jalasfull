@@ -16,6 +16,7 @@ open class SessionBaseDto : JalasDto<Session> {
     var users: List<UserShallowDto>? = null
     var timeOfCreation: Int = 0
     var options: List<SessionOptionShallowDto>? = null
+    var comments: List<CommentShallowDto>? = null
 
     override fun toEntity(entity: Session?): Session {
         val model = Session()
@@ -28,6 +29,7 @@ open class SessionBaseDto : JalasDto<Session> {
         model.users = users?.map { it.toEntity() } ?: model.users
         model.timeOfCreation = timeOfCreation
         model.options = options?.map { it.toEntity() }
+        model.comments = comments?.map{it.toEntity()} ?: model.comments
         return model
     }
 
