@@ -12,6 +12,7 @@ open class UserBaseDto : JalasDto<User> {
 
     override fun toEntity(entity: User?): User {
         var model = User()
+        model.id = id
         model.name = name
         model.email = email
         model.username = username

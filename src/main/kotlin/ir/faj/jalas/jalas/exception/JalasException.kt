@@ -24,6 +24,10 @@ class NotFoundUser(message: String) : RuntimeException(message) {
     constructor() : this("کاربر مورد نظر یافت نشد")
 }
 
+class NotFoundSession(message: String) : RuntimeException(message) {
+    constructor() : this("جلسه مورد نظر یافت نشد")
+}
+
 class NotFoundPassword(message: String) : RuntimeException(message) {
     constructor() : this("رمز مورد نظر یافت نشد")
 }
@@ -42,6 +46,14 @@ class NotFoundVote(message: String) : RuntimeException(message) {
 
 class NotAllowToAccess(message: String) : RuntimeException(message) {
     constructor() : this("شما در این جلسه حظور ندارید و اجازه ندارید اطلاعات آن را ببنید")
+}
+
+class NotAllowToDeleteComment(message: String) : RuntimeException(message) {
+    constructor() : this("شما اجازه‌ی حذف کردن این کامنت را ندارید")
+}
+
+class NotAllowToDeleteOption(message: String) : RuntimeException(message) {
+    constructor() : this("شما اجازه‌ی حذف کردن این آپشن را ندارید")
 }
 
 

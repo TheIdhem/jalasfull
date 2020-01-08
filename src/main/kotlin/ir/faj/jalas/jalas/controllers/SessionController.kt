@@ -67,4 +67,16 @@ class SessionController(val sessionService: SessionService, val userService: Use
         sessionService.voteToOption(request, user)
         return "OK"
     }
+
+    @DeleteMapping("/option/{optionId}")
+    fun deleteOptionFromPoll(@PathVariable optionId: Int, principal: Principal): String {
+        val user = userService.findByUserName(principal)
+        return sessionService.deleteOption(optionId, user)
+    }
+
+    @PostMapping("/status")
+    fun changeStatusOfSession(@RequestBody request: SessionStatusRequest, principal: Principal) {
+        val user = userService.findByUserName(principal)
+        return sessionService.changeSessionStatus(request, user)
+    }
 }
