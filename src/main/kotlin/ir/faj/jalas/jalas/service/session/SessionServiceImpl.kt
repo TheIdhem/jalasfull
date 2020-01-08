@@ -52,7 +52,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
     }
 
     override fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): Session {
-        val username = reservationRequest.username ?: throw NotFoundUser()
+        reservationRequest.username ?: throw NotFoundUser()
         val session = sessions.findById(reservationRequest.sessionId).get()
         val option = options.findById(reservationRequest.optionId).get()
         reservationRequest.startAt = option.startAt
@@ -254,12 +254,11 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         return user.sessions?.map { it.toShallow() }?.map {
             it.options?.forEach { option ->
                 try {
-//                    option.roomsCouldBeReserved = getAvailableRoom(option.startAt, option.endAt).availableRooms
                     option.agreeVotes = option.votes?.filter { it.status == VoteType.up }?.size ?: 0
                     option.disAgreeVotes = option.votes?.filter { it.status == VoteType.down }?.size ?: 0
                     option.sosoVotes = option.votes?.filter { it.status == VoteType.soso }?.size ?: 0
                 } catch (ex: Exception) {
-                    //hisssss
+                    logger.info("get session got an exception ${option.id}")
                 }
             }
             it
@@ -275,22 +274,6 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         return session
     }
 
-    @Transactional
-    override fun voteToOptions(request: VoteRequest, user: User) {
-        if (votes.findByUserAndOptionIdIsIn(user, request.agreeOptionIds)?.isNotEmpty() == true)
-            votes.deleteVotesByOptionIdAndUserId(request.agreeOptionIds, user.id)
-
-        request.agreeOptionIds.forEach { optionId ->
-            val option = options.findById(optionId).get()
-            if (votes.findByUserAndOptionAndStatus(user, option, VoteType.up) == null)
-                votes.save(Vote(option = option, user = user, status = VoteType.up))
-        }
-        request.disAgreeOptionIds?.forEach { optionId ->
-            val option = options.findById(optionId).get()
-            if (votes.findByUserAndOptionAndStatus(user, option, VoteType.down) == null)
-                votes.save(Vote(option = option, user = user, status = VoteType.down))
-        }
-    }
 
     @Transactional
     override fun voteToOption(request: SingleVoteRequest, user: User) {

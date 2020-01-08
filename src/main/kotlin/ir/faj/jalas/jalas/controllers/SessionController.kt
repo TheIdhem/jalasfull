@@ -54,12 +54,6 @@ class SessionController(val sessionService: SessionService, val userService: Use
         return sessionService.reserveRoom(request, roomId)
     }
 
-    @PostMapping("/votes")
-    fun voteToOptions(@RequestBody request: VoteRequest, principal: Principal): String {
-        val user = userService.findByUserName(principal)
-        sessionService.voteToOptions(request, user)
-        return "OK"
-    }
 
     @PostMapping("/vote")
     fun voteToOption(@RequestBody request: SingleVoteRequest, principal: Principal): String {
