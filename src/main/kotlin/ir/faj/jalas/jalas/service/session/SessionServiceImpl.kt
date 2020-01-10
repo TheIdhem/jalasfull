@@ -280,7 +280,11 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         val session = sessions.findById(sessionId).get().toShallow()
         session.users?.find { user.id == it.id } ?: throw NotAllowToAccess()
         session.options?.forEach { option ->
-            option.roomsCouldBeReserved = getAvailableRoom(option.startAt, option.endAt).availableRooms
+            try {
+                option.roomsCouldBeReserved = getAvailableRoom(option.startAt, option.endAt).availableRooms
+            } catch (ex: Exception) {
+                logger.warn("got exception to get rooms : $ex")
+            }
         }
         return session
     }
