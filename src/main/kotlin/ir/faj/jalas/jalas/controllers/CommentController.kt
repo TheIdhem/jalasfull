@@ -18,7 +18,7 @@ class CommentController(private val commentService: CommentService,
     }
 
     @DeleteMapping("/{commentId}")
-    fun deleteComment(@PathVariable commentId: Int, principal: Principal): String {
+    fun deleteComment(@PathVariable commentId: Int, principal: Principal):  List<CommentShallowDto> {
         val user = userService.getUserInfo(principal.name)
         return commentService.deleteComment(user, commentId)
     }

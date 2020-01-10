@@ -6,5 +6,5 @@ import ir.faj.jalas.jalas.dto.rdbms.UserShallowDto
 
 interface CommentService {
     fun addComment(comment: CommentRequest, user: UserShallowDto): List<CommentShallowDto>
-    fun deleteComment(user:UserShallowDto,commentId: Int):String
+    fun deleteComment(user:UserShallowDto,commentId: Int): List<CommentShallowDto>
 }

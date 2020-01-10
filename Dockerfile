@@ -1,4 +1,5 @@
-FROM openjdk:8-jdk-alpine
+FROM maven:3.3.3
+
 VOLUME /tmp
 RUN mvn clean package
 ARG JAR_FILE=target/*.jar

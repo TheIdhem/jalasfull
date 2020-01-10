@@ -32,13 +32,16 @@ open class CommentServiceImpl(private val comments: CommentRepository,
     }
 
     @Transactional
-    override fun deleteComment(user: UserShallowDto, commentId: Int): String {
+    override fun deleteComment(user: UserShallowDto, commentId: Int): List<CommentShallowDto> {
+        val comment= comments.findById(commentId).get()
         comments.findById(commentId).get().let { comment ->
             if (user.id == comment.sender.id || user.id == comment.session.owner.id)
                 comments.deleteCommentById(comment.id)
             else throw NotAllowToDeleteComment()
         }
-        return "Ok"
+        return comments.findBySessionId(comment.session.id)
+                .filter { it.parentComment == null }
+                .map { it.toShallow(true) }
     }
 
 }
