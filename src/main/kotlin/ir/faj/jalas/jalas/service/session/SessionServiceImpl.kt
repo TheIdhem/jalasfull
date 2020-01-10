@@ -52,13 +52,14 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
 
     }
 
-    override fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): Session {
+    override fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): SessionShallowDto {
         reservationRequest.username ?: throw NotFoundUser()
         val session = sessions.findById(reservationRequest.sessionId).get()
         val option = options.findById(reservationRequest.optionId).get()
         reservationRequest.startAt = option.startAt
         reservationRequest.endAt = option.endAt
-        return reservSession(session, reservationRequest)
+        session.roomId = roomId
+        return reservSession(session, reservationRequest).toShallow(true)
 
     }
 
@@ -93,6 +94,10 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
                 }
                 401 -> throw NotFoundRoom()
                 500 -> {
+                    logEvent(session, SessionStatus.pending, EventLogType.shouldRequestAgain)
+                    throw InternalServerError()
+                }
+                503 -> {
                     logEvent(session, SessionStatus.pending, EventLogType.shouldRequestAgain)
                     throw InternalServerError()
                 }
@@ -199,16 +204,17 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
             it.createOrFindUser()
         }
 
-
-        val session = sessions.save(Session(
+        var session = Session(
                 users = usersToSessions + user.email.createOrFindUser(),
                 title = request.title,
                 owner = user
-        ))
-
+        )
         usersToSessions.forEach {
             notifyAddedToPoll(it, session)
         }
+
+        session = sessions.save(session)
+
 
         request.options.forEach {
             Pair(it.startAt, it.endAt).createOrFindOptions(it.id, session).first

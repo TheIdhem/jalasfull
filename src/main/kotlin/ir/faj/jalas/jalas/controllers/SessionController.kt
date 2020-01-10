@@ -50,7 +50,7 @@ class SessionController(val sessionService: SessionService, val userService: Use
 
 
     @PostMapping("/rooms/{roomId}/reserve")
-    fun reserveRoom(@RequestBody request: ReservationRequest, @PathVariable roomId: Int, principal: Principal): Session {
+    fun reserveRoom(@RequestBody request: ReservationRequest, @PathVariable roomId: Int, principal: Principal): SessionShallowDto {
         request.username = userService.findByUserName(principal).username
         return sessionService.reserveRoom(request, roomId)
     }

@@ -36,8 +36,9 @@ class UserController(private val userService: UserService) {
     }
 
     @PostMapping("/notification")
-    fun addNotification(@RequestBody request: NotificationRequest, principal: Principal) {
+    fun addNotification(@RequestBody request: NotificationRequest, principal: Principal): List<Any> {
         val user = userService.findByUserName(principal)
         userService.addNotification(request, user)
+        return listOf()
     }
 }

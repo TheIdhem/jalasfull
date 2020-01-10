@@ -11,7 +11,7 @@ import java.util.*
 interface SessionService {
     fun getAvailableRoom(startAt: Date, endAt: Date): AvailableRoomResponse
     fun getAvrageTimeSession(): ReportResponse
-    fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): Session
+    fun reserveRoom(reservationRequest: ReservationRequest, roomId: Int): SessionShallowDto
     fun reservSession(session: Session, reservationRequest: ReservationRequest, eventShouldLog: Boolean = false): Session
     fun notifySuccessReservation(user: User, session: Session)
     fun createSession(request: SessionRequest, user: User): SessionShallowDto
