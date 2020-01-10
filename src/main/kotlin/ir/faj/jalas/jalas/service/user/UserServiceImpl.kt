@@ -10,6 +10,7 @@ import ir.faj.jalas.jalas.entities.repository.NotificationRepository
 import ir.faj.jalas.jalas.entities.repository.SessionRepository
 import ir.faj.jalas.jalas.entities.repository.UserRepository
 import ir.faj.jalas.jalas.enums.NotificationType
+import ir.faj.jalas.jalas.exception.CouldNotDeleteOwner
 import ir.faj.jalas.jalas.exception.NotFoundUser
 import ir.faj.jalas.jalas.exception.UserNotAllowToChange
 import ir.faj.jalas.jalas.exception.UsernameAlreadyReserved
@@ -50,6 +51,8 @@ open class UserServiceImpl(val users: UserRepository,
         val session = sessions.findById(sessionId).get()
         if (session.owner.id != user.id)
             throw UserNotAllowToChange()
+        if (session.owner.id == userId)
+            throw CouldNotDeleteOwner()
         session.users = session.users.mapNotNull {
             if (it.id == userId) {
                 notifyForRemoveFromPoll(it, session.title)

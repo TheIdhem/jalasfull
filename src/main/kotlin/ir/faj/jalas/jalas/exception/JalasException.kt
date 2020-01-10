@@ -40,6 +40,10 @@ class UserNotAllowToChange(message: String) : RuntimeException(message) {
     constructor() : this("شما اجازه‌ی ایجاد تغیرات را ندارید")
 }
 
+class CouldNotDeleteOwner(message: String) : RuntimeException(message) {
+    constructor() : this("صاحب جلسه را نمیتوان حذف کرد")
+}
+
 class NotFoundVote(message: String) : RuntimeException(message) {
     constructor() : this("رای مورد نظر موجود نبود")
 }

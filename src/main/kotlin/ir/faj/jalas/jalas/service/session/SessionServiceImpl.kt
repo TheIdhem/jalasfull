@@ -126,7 +126,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
                             |Dear ${user.name},
                             |
                             |Your meeting '${session.title}' at time [${session.startAt}, ${session.endAt}] has been successfully reserved at room ${session.roomId}.
-                            |this is the link to see your session data http://localhost:3000/session/'${session.id}'
+                            |this is the link to see your session data http://localhost:3000/session/${session.id}
                             |
                             |Best Regards,
                             |HamoonHamishegi Team
