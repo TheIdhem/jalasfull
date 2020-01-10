@@ -37,7 +37,11 @@ class User(
 
         @Basic
         @Column(name = "password", nullable = false)
-        var password: String = ""
+        var password: String = "",
+
+        @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+        @Fetch(value = FetchMode.SELECT)
+        var notification: List<Notification>? = null
 
 ) {
     constructor() : this(id = 0)
@@ -54,6 +58,7 @@ class User(
         dto.username = username
         dto.email = email
         dto.id = id
+        dto.notification = notification?.map { it.toShallow(true) }
         return dto
     }
 }

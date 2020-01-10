@@ -39,7 +39,8 @@ class Notification(
 
     fun toShallow(isNested: Boolean = false): NotificationShallowDto {
         val dto = NotificationShallowDto()
-        dto.user = user.toShallow(true)
+        if (!isNested)
+            dto.user = user.toShallow(true)
         dto.id = id
         dto.type = type
 

@@ -9,6 +9,7 @@ open class UserBaseDto : JalasDto<User> {
     var username: String = ""
     var sessions: List<SessionShallowDto>? = null
     var votes: List<VoteShallowDto>? = null
+    var notification: List<NotificationShallowDto>? = null
 
     override fun toEntity(entity: User?): User {
         var model = User()
@@ -18,6 +19,7 @@ open class UserBaseDto : JalasDto<User> {
         model.username = username
         model.sessions = sessions?.map { it.toEntity() }
         model.votes = votes?.map { it.toEntity() }
+        model.notification = notification?.map { it.toEntity() }
         return model
     }
 
