@@ -10,4 +10,6 @@ interface CommentRepository : JpaRepository<Comment, Int>, JpaSpecificationExecu
     @Modifying
     @Query("delete from Comment c where c.id =?1")
     fun deleteCommentById(commentId: Int)
+
+    fun findBySessionId(sessionId: Int): List<Comment>
 }

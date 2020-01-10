@@ -12,7 +12,7 @@ import java.security.Principal
 class CommentController(private val commentService: CommentService,
                         private val userService: UserService) {
     @PostMapping
-    fun addComment(@RequestBody request: CommentRequest, principal: Principal): CommentShallowDto {
+    fun addComment(@RequestBody request: CommentRequest, principal: Principal): List<CommentShallowDto> {
         val user = userService.getUserInfo(principal.name)
         return commentService.addComment(request, user)
     }

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 open class CommentServiceImpl(private val comments: CommentRepository,
                               private val sessions: SessionRepository) : CommentService {
 
-    override fun addComment(request: CommentRequest, user: UserShallowDto): CommentShallowDto {
+    override fun addComment(request: CommentRequest, user: UserShallowDto): List<CommentShallowDto> {
         val session = sessions.findById(request.sessionId).get()
         val parentComment = request.parentCommentId?.let {
             comments.findById(it).get()
@@ -25,7 +25,10 @@ open class CommentServiceImpl(private val comments: CommentRepository,
                 content = request.content,
                 parentComment = parentComment
         )
-        return comments.save(comment).toShallow(true)
+        comments.save(comment)
+        return comments.findBySessionId(session.id)
+                .filter { it.parentComment == null }
+                .map { it.toShallow(true) }
     }
 
     @Transactional

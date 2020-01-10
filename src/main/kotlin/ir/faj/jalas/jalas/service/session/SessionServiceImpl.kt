@@ -251,18 +251,22 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
     }
 
     override fun getAllSession(user: User): List<SessionShallowDto> {
-        return user.sessions?.map { it.toShallow() }?.map {
-            it.options?.forEach { option ->
-                try {
-                    option.agreeVotes = option.votes?.filter { it.status == VoteType.up }?.size ?: 0
-                    option.disAgreeVotes = option.votes?.filter { it.status == VoteType.down }?.size ?: 0
-                    option.sosoVotes = option.votes?.filter { it.status == VoteType.soso }?.size ?: 0
-                } catch (ex: Exception) {
-                    logger.info("get session got an exception ${option.id}")
-                }
-            }
-            it
-        } ?: listOf()
+        return user.sessions
+                ?.map {
+                    it.comments = it.comments?.filter { it.parentComment == null }
+                    it
+                }?.map { it.toShallow() }?.map {
+                    it.options?.forEach { option ->
+                        try {
+                            option.agreeVotes = option.votes?.filter { it.status == VoteType.up }?.size ?: 0
+                            option.disAgreeVotes = option.votes?.filter { it.status == VoteType.down }?.size ?: 0
+                            option.sosoVotes = option.votes?.filter { it.status == VoteType.soso }?.size ?: 0
+                        } catch (ex: Exception) {
+                            logger.info("get session got an exception ${option.id}")
+                        }
+                    }
+                    it
+                } ?: listOf()
     }
 
     override fun getSessionWithId(user: User, sessionId: Int): SessionShallowDto {
