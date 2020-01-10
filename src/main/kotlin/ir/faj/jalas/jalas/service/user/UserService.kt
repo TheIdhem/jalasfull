@@ -12,6 +12,6 @@ interface UserService {
     fun register(request: UserRegisterRequest): UserShallowDto
     fun findByUserName(principal: Principal): User
     fun getUserInfo(username: String): UserShallowDto
-    fun deleteUserFromSession(userId: Int, sessionId: Int, user: User)
+    fun deleteUserFromSession(userId: Int, sessionId: Int, user: User):List<UserShallowDto>
     fun addNotification(request: NotificationRequest, user: User)
 }

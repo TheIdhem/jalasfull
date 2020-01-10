@@ -4,6 +4,7 @@ import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
 import ir.faj.jalas.jalas.clients.model.RoomReservationRequest
 import ir.faj.jalas.jalas.clients.model.RoomReservationResponse
 import ir.faj.jalas.jalas.controllers.model.*
+import ir.faj.jalas.jalas.dto.rdbms.SessionOptionShallowDto
 import ir.faj.jalas.jalas.dto.rdbms.SessionShallowDto
 import ir.faj.jalas.jalas.entities.Session
 import ir.faj.jalas.jalas.service.session.SessionService
@@ -63,7 +64,7 @@ class SessionController(val sessionService: SessionService, val userService: Use
     }
 
     @DeleteMapping("/option/{optionId}")
-    fun deleteOptionFromPoll(@PathVariable optionId: Int, principal: Principal): String {
+    fun deleteOptionFromPoll(@PathVariable optionId: Int, principal: Principal): List<SessionOptionShallowDto> {
         val user = userService.findByUserName(principal)
         return sessionService.deleteOption(optionId, user)
     }

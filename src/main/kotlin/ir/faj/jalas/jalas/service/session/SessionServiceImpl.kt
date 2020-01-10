@@ -4,6 +4,7 @@ import feign.FeignException
 import ir.faj.jalas.jalas.clients.JalasReservation
 import ir.faj.jalas.jalas.clients.model.AvailableRoomResponse
 import ir.faj.jalas.jalas.controllers.model.*
+import ir.faj.jalas.jalas.dto.rdbms.SessionOptionShallowDto
 import ir.faj.jalas.jalas.dto.rdbms.SessionShallowDto
 import ir.faj.jalas.jalas.entities.*
 import ir.faj.jalas.jalas.entities.repository.*
@@ -297,13 +298,13 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
     }
 
     @Transactional
-    override fun deleteOption(optionId: Int, user: User): String {
+    override fun deleteOption(optionId: Int, user: User): List<SessionOptionShallowDto> {
         val option = options.findById(optionId).get()
         if (option.session?.owner?.id != user.id)
             throw NotAllowToDeleteOption()
         option.votes?.map { it.user }?.emailToUserThatOptionWhereDeleted(option)
         options.deleteOptionById(optionId)
-        return "Ok"
+        return options.findBySessionId(option.session!!.id).map { it.toShallow(true) }
     }
 
     private fun String.createOrFindUser(): User {

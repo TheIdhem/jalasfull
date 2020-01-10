@@ -14,4 +14,6 @@ interface SessionOptionRepository : JpaRepository<SessionOption, Int>, JpaSpecif
     @Modifying
     @Query("delete from SessionOption s where s.id = ?1")
     fun deleteOptionById(optionId: Int)
+
+    fun findBySessionId(sessionId:Int):List<SessionOption>
 }

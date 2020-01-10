@@ -46,7 +46,7 @@ open class UserServiceImpl(val users: UserRepository,
         return users.findByUsername(username)?.toShallow() ?: throw NotFoundUser()
     }
 
-    override fun deleteUserFromSession(userId: Int, sessionId: Int, user: User) {
+    override fun deleteUserFromSession(userId: Int, sessionId: Int, user: User): List<UserShallowDto> {
         val session = sessions.findById(sessionId).get()
         if (session.owner.id != user.id)
             throw UserNotAllowToChange()
@@ -57,6 +57,7 @@ open class UserServiceImpl(val users: UserRepository,
             } else it
         }
         sessions.save(session)
+        return session.users.map { it.toShallow(true) }
     }
 
     private fun notifyForRemoveFromPoll(user: User, title: String) {

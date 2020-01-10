@@ -30,9 +30,9 @@ class UserController(private val userService: UserService) {
     }
 
     @DeleteMapping("{userId}/session/{sessionId}")
-    fun deleteUserFromSession(@PathVariable userId: Int, @PathVariable sessionId: Int, principal: Principal) {
+    fun deleteUserFromSession(@PathVariable userId: Int, @PathVariable sessionId: Int, principal: Principal): List<UserShallowDto> {
         val user = userService.findByUserName(principal)
-        userService.deleteUserFromSession(userId, sessionId, user)
+        return userService.deleteUserFromSession(userId, sessionId, user)
     }
 
     @PostMapping("/notification")
