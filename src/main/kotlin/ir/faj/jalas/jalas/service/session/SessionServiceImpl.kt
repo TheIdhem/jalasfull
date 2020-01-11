@@ -351,7 +351,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
     }
 
     @Transactional
-    override fun changeSessionStatus(request: SessionStatusRequest, user: User) {
+    override fun changeSessionStatus(request: SessionStatusRequest, user: User): List<Any> {
         val session = sessions.findById(request.sessionId).orElseThrow { throw NotFoundSession() }
         if (session.owner.id != user.id)
             throw UserNotAllowToChange()
@@ -360,6 +360,7 @@ open class SessionServiceImpl(val jalasReservation: JalasReservation,
         session.users.forEach { user ->
             notifyForCanceledPollOrSession(user, session, pollOrSession)
         }
+        return listOf()
     }
 
 

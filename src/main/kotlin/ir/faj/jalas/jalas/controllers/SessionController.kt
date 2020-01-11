@@ -70,7 +70,7 @@ class SessionController(val sessionService: SessionService, val userService: Use
     }
 
     @PostMapping("/status")
-    fun changeStatusOfSession(@RequestBody request: SessionStatusRequest, principal: Principal) {
+    fun changeStatusOfSession(@RequestBody request: SessionStatusRequest, principal: Principal):List<Any> {
         val user = userService.findByUserName(principal)
         return sessionService.changeSessionStatus(request, user)
     }

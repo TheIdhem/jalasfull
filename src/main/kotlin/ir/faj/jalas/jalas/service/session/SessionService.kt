@@ -19,6 +19,6 @@ interface SessionService {
     fun getAllSession(user: User): List<SessionShallowDto>
     fun getSessionWithId(user: User, sessionId: Int): SessionShallowDto
     fun voteToOption(request: SingleVoteRequest, user: User)
-    fun deleteOption(optionId: Int, user: User):  List<SessionOptionShallowDto>
-    fun changeSessionStatus(request: SessionStatusRequest, user: User)
+    fun deleteOption(optionId: Int, user: User): List<SessionOptionShallowDto>
+    fun changeSessionStatus(request: SessionStatusRequest, user: User): List<Any>
 }
